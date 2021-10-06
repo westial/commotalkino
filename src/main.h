@@ -16,4 +16,7 @@
 #define ADDRESS_LOW 0x02
 #define CHANNEL 0x10
 
+EByte StartTransceiver(int rx, int tx, int8_t m0, int8_t m1, int8_t aux, int frequency);
+unsigned long Transmit(const char* address, const char* content, unsigned long size);
+
 #endif //COMMOTALKINO_SRC_MAIN_H_

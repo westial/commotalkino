@@ -13,10 +13,7 @@ struct DATA {
 
 DATA MyData;
 
-int channel;
 EByte transceiver = nullptr;
-
-EByte StartTransceiver(int rx, int tx, int8_t m0, int8_t m1, int8_t aux, int frequency);
 
 EByte StartTransceiver(
     const int rx,
@@ -36,6 +33,17 @@ EByte StartTransceiver(
   return Transceiver;
 }
 
+unsigned long Transmit(const char* address, const char* content, unsigned long size) {
+  MyData.ADDH = address[0];
+  MyData.ADDL = address[1];
+  MyData.CHAN = address[2];
+  MyData.Count++;
+  MyData.Bits = analogRead(A0);
+  MyData.Volts = (float)(MyData.Bits * ( 5.0 / 1024.0 ));
+  transceiver.SendStruct(&MyData, sizeof(MyData));
+  return size;
+}
+
 void setup() {
   Serial.begin(SERIAL_FREQ);
   transceiver = StartTransceiver(PIN_RX, PIN_TX, PIN_M0, PIN_M1, PIN_AX, SERIAL_FREQ);
@@ -46,19 +54,8 @@ void setup() {
 }
 
 void loop() {
-
-  // measure some data and save to the structure
-  MyData.ADDH = 1;
-  MyData.ADDL = 0;
-  MyData.CHAN = 16;
-  MyData.Count++;
-  MyData.Bits = analogRead(A0);
-  MyData.Volts = (float)(MyData.Bits * ( 5.0 / 1024.0 ));
-
-  // i highly suggest you send data using structures and not
-  // a parsed data--i've always had a hard time getting reliable data using
-  // a parsing method
-  transceiver.SendStruct(&MyData, sizeof(MyData));
+  const char address[3] = {ADDRESS_HIGH, ADDRESS_LOW, CHANNEL};
+  Transmit(address, nullptr, 10);
 
   // let the use know something was sent
   Serial.print("Sending: "); Serial.println(MyData.Count);
