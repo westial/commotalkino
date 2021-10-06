@@ -1,4 +1,5 @@
 .pio
 CMakeListsPrivate.txt
+CMakeListsUser.txt
 cmake-build-*/ 
 .idea

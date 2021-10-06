@@ -38,8 +38,7 @@
 #include "EByte.h"
 #include <Stream.h>
 
-EByte::EByte() {
-}
+EByte::EByte() = default;
 
 /*
 create the transceiver object
