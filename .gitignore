@@ -5,3 +5,4 @@ cmake-build-*/
 .idea
 lib/*
 !lib/EByte
+src/messageconfig.h
