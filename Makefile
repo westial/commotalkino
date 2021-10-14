@@ -4,16 +4,16 @@ SRC_DIR=src
 TMP_DIR=/tmp
 WORKING_DIR=$(shell pwd)
 
-.DEFAULT_GOAL := install
+.DEFAULT_GOAL := deploy
 
-install:
+deploy:
 	@echo "> Downloading CommoTalkie"
 	cd "$(TMP_DIR)"
-	git clone "git@github.com:westial/commotalkie.git" "$(TMP_DIR)/commotalkie"
+# FIXME cloning a branch!
+	git clone -b "commotalkie-12-ebyte-driver" "git@github.com:westial/commotalkie.git" "$(TMP_DIR)/commotalkie"
 	@echo "> Preparing files"
 	cd "$(TMP_DIR)/commotalkie/arduino" && $(MAKE)
 	cd "$(TMP_DIR)/commotalkie/arduino/prebuild"
-	mv "$(TMP_DIR)/commotalkie/arduino/prebuild/messageconfig.h" "$(WORKING_DIR)/$(SRC_DIR)"
 	mv "$(TMP_DIR)/commotalkie/arduino/prebuild/CommoTalkie" "$(WORKING_DIR)/$(LIBRARY_DIR)"
 	@echo "> Finishing CommoTalkie install"
 	rm -Rf "$(TMP_DIR)/commotalkie"
@@ -21,5 +21,8 @@ install:
 clean:
 	@echo "> Cleaning CommoTalkie"
 	rm -Rf "$(TMP_DIR)/commotalkie"
-	rm -Rf "$(WORKING_DIR)/$(SRC_DIR)/messageconfig.h"
 	rm -Rf "$(WORKING_DIR)/$(LIBRARY_DIR)/CommoTalkie"
+
+update:
+	$(MAKE) clean
+	$(MAKE) deploy

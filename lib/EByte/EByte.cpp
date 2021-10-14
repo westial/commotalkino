@@ -90,7 +90,6 @@ Method to indicate availability
 */
 
 bool EByte::available() {
-
   return _s->available();
 
 }

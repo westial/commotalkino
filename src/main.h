@@ -1,9 +1,12 @@
 #ifndef COMMOTALKINO_SRC_MAIN_H_
 #define COMMOTALKINO_SRC_MAIN_H_
 
+#include "../lib/CommoTalkie/Driver.h"
+#include "../lib/CommoTalkie/EByte.h"
+#include "../lib/CommoTalkie/PublisherBuilder.h"
+#include "../lib/CommoTalkie/messageconfig.h"
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-#include "../lib/EByte/EByte.h"
 
 #define SERIAL_FREQ 9600
 #define PIN_RX 2
@@ -16,7 +19,11 @@
 #define ADDRESS_LOW 0x02
 #define CHANNEL 0x10
 
-EByte StartTransceiver(int rx, int tx, int8_t m0, int8_t m1, int8_t aux, int frequency);
+#define COMMOTALKIE_SALT "RtfgY,u-jk3"
+
+
+int InitPublisher();
+Driver Create_Driver(const char *, char, int, int);
 unsigned long Transmit(const char* address, const char* content, unsigned long size);
 
 #endif //COMMOTALKINO_SRC_MAIN_H_
