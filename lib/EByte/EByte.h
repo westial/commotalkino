@@ -249,9 +249,10 @@ public:
 	// it does NOT return the ebyte back to factory defaults
 	void Reset();
 
+        // function to read modules parameters
+        bool ReadParameters();
+
 protected:
-	// function to read modules parameters
-	bool ReadParameters();
 
 	// method to let method know of module is busy doing something (timeout provided to avoid lockups)
 	void CompleteTask(unsigned long timeout = 0);

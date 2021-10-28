@@ -1,0 +1,29 @@
+
+Starting Sender
+2
+16
+----------------------------------------
+Model no.: 44
+Version  : C
+Features : 14
+
+Mode (HEX/DEC/BIN): C0/192/11000000
+AddH (HEX/DEC/BIN): 1/1/1
+AddL (HEX/DEC/BIN): 0/0/0
+Sped (HEX/DEC/BIN): 1A/26/11010
+Chan (HEX/DEC/BIN): 10/16/10000
+Optn (HEX/DEC/BIN): C4/196/11000100
+Addr (HEX/DEC/BIN): 100/256/100000000
+
+SpeedParityBit (HEX/DEC/BIN)    : 0/0/0
+SpeedUARTDataRate (HEX/DEC/BIN) : 3/3/11
+SpeedAirDataRate (HEX/DEC/BIN)  : 2/2/10
+OptionTrans (HEX/DEC/BIN)       : 1/1/1
+OptionPullup (HEX/DEC/BIN)      : 1/1/1
+OptionWakeup (HEX/DEC/BIN)      : 0/0/0
+OptionFEC (HEX/DEC/BIN)         : 1/1/1
+OptionPower (HEX/DEC/BIN)       : 0/0/0
+----------------------------------------
+Sending: 1
+Sending: 2
+Sending: 3

@@ -1,12 +1,7 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include "../lib/EByte/EByte.h"
-
-#define PIN_RX 2
-#define PIN_TX 3
-#define PIN_M0 7
-#define PIN_M1 6
-#define PIN_AX 5
+#include "main.h"
 
 // i recommend putting this code in a .h file and including it
 // from both the receiver and sender modules
@@ -30,7 +25,7 @@ SoftwareSerial ESerial(PIN_RX, PIN_TX);
 
 
 // create the transceiver object, passing in the serial and pins
-EByte Transceiver(&ESerial, PIN_M0, PIN_M1, PIN_AX);
+EByte Transceiver(&ESerial, PIN_M0, PIN_M1, PIN_AUX);
 
 void setup() {
 
@@ -81,5 +76,5 @@ void loop() {
 
   // let the use know something was sent
   Serial.print("Sending: "); Serial.println(MyData.Count);
-  delay(1000);
+  delay(5000);
 }
