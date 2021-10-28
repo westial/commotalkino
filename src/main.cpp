@@ -15,19 +15,6 @@
 // -----------------------------------------------------------------------------
 // Additional Headers
 
-typedef struct Ball {
-  unsigned long hit;
-} Ball;
-
-typedef struct LoraConfig {
-  unsigned char id;
-  unsigned char address_high;
-  unsigned char address_low;
-  unsigned char port;
-  unsigned char channel;
-  short do_i_ping;
-} LoraConfig;
-
 static void set_config(int ping_pin);
 
 static void print_chars(const char *, unsigned long);
@@ -161,7 +148,6 @@ unsigned long WriteToSerial(void *content, unsigned long size) {
 
 unsigned long ReadFromSerial(char *content, unsigned long size,
                              unsigned long position) {
-  blink(LISTEN_LED_PIN);
   while (SSerial.available() > 0) {
     char input = (char)SSerial.read();
     if ('\n' == input)
@@ -223,12 +209,15 @@ void Pull(char *body) {
   unsigned char port = 0;
   const unsigned char address[3] = {my_config.address_high,
                                     my_config.address_low, my_config.channel};
+  memset(body, 0, sizeof(Ball));
   Serial.print("Pull address: ");
   Serial.print(address[0], HEX);
   Serial.print(address[1], HEX);
   Serial.println(address[2], HEX);
   Result result =
       Pull_Invoke(reinterpret_cast<const char *>(address), &port, &id, body);
+  Serial.print("Pull body: ");
+  print_bytes(body, sizeof(Ball));
   Serial.print("Result: ");
   switch (result) {
   case Success:
@@ -272,6 +261,20 @@ void Broadcast(const char *body) {
   Publish(address, body);
 }
 
+Ball to_ball(const char* body) {
+  Ball ball;
+  memcpy((void *)&ball, body, sizeof(Ball));
+  Serial.print("To ball: ");
+  print_bytes(body, sizeof(Ball));
+  return ball;
+}
+
+void from_ball(Ball ball, char* body) {
+  Serial.print("From ball: ");
+  print_bytes((const char *)&ball, sizeof(Ball));
+  memcpy(body, (const void *)&ball, sizeof(Ball));
+}
+
 // -----------------------------------------------------------------------------
 // Debug
 
@@ -282,11 +285,15 @@ void print_state(Driver* driver) {
 
 void print_bytes(const char *body, int size) {
   int i;
-  for (i = 0; i + 1 < size; i++) {
-    Serial.print(body[i], HEX);
+  char buffer[5];
+  Serial.print("|");
+  for (i = 0; i < size; i++) {
+    memset(buffer, 0, sizeof(buffer));
+    sprintf(buffer, "%02x", body[i]);
+    Serial.print(buffer);
     Serial.print("|");
   }
-  Serial.println(body[i], HEX);
+  Serial.println();
 }
 
 void print_chars(const char *anArray, unsigned long size) {
@@ -314,33 +321,68 @@ void setup() {
   loop_count = 0;
 }
 
-void loop() {
-  Ball body;
+void loop_ping_pong() {
+  char body[MESSAGE_BODY_LENGTH];
+  Ball ball;
   if (0 == loop_count && my_config.do_i_ping) {
     Serial.println("I am Ping");
-    body.hit = 1;
-    last_hit = body.hit;
-    Broadcast((char *)&body);
+    ball.hit = 1;
+    last_hit = ball.hit;
+    from_ball(ball, body);
+    Broadcast(body);
   } else {
     if (0 == loop_count) {
       Serial.println("I am Pong");
-      body.hit = 0;
-      last_hit = body.hit;
+      ball.hit = 0;
+      last_hit = ball.hit;
     }
-    Pull((char *)&body);
+    Pull(body);
+    ball = to_ball(body);
     blink(LED_BUILTIN);
-    if (last_hit + 1 == body.hit) {
-      Serial.print("Hit: ");
-      Serial.println(body.hit);
-      body.hit++;
-      Serial.print("Hit: ");
-      Serial.println(body.hit);
+    if (last_hit + 1 == ball.hit) {
+      Serial.print("Got Hit: ");
+      Serial.println(ball.hit);
+      ball.hit++;
+      Serial.print("Sending Hit: ");
+      Serial.println(ball.hit);
+      from_ball(ball, body);
       Broadcast((char *)&body);
-      last_hit = body.hit;
-    } else if (last_hit != body.hit) {
+      last_hit = ball.hit;
+    } else if (last_hit != ball.hit) {
       Serial.print("Unexpected hit: ");
-      Serial.println(body.hit);
+      Serial.println(ball.hit);
     }
   }
   loop_count++;
+}
+
+void loop_ping() {
+  char body[MESSAGE_BODY_LENGTH];
+  Ball ball;
+  if (my_config.do_i_ping) {
+    Serial.println("I am Ping");
+    ball.hit = loop_count;
+    last_hit = ball.hit;
+    from_ball(ball, body);
+    Broadcast(body);
+    loop_count++;
+    delay(2000);
+  }
+}
+
+void loop_pong() {
+  char body[MESSAGE_BODY_LENGTH];
+  Ball ball;
+  if (!my_config.do_i_ping) {
+    Pull(body);
+    ball = to_ball(body);
+    Serial.print("Got Hit: ");
+    Serial.println(ball.hit);
+    loop_count++;
+  }
+}
+
+void loop() {
+  loop_ping();
+  loop_pong();
 }

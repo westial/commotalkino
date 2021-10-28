@@ -34,10 +34,25 @@
 #define LORA_CHANNEL 0x10
 #define COMMON_PORT 0xC6
 
+typedef struct Ball {
+  unsigned long hit;
+} Ball;
+
+typedef struct LoraConfig {
+  unsigned char id;
+  unsigned char address_high;
+  unsigned char address_low;
+  unsigned char port;
+  unsigned char channel;
+  short do_i_ping;
+} LoraConfig;
+
 void InitArduino();
 void InitDriver();
 int InitPublisher();
 int InitSubscriber();
+Ball to_ball(const char* body);
+void from_ball(Ball ball, char* body);
 void Pull(char *body);
 void OneToOne(const char *body);
 void Publish(const unsigned char address[3], const char *body);
