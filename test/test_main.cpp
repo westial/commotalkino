@@ -1,5 +1,4 @@
 #include "test_main.h"
-#include "../lib/EByte/EByte.h"
 #include <Arduino.h>
 #include <unity.h>
 
@@ -80,7 +79,7 @@ extern "C" unsigned long Millis() {
   return log;
 }
 
-int Listen(const char *address, char *content, const unsigned long size) {
+int Listen(const unsigned char *address, char *content, const unsigned long size) {
   // TODO Reconfigure if the address is different in driver
   return Driver_Receive(&lora_driver, content, size);
 }
@@ -135,10 +134,10 @@ void InitArduino() {
 }
 
 void InitDriver() {
-  lora_driver = Create_Driver("\x01\x02\x10", AIR_RATE_2400, 1, 1);
+  lora_driver = Create_Driver((const unsigned char*)"\x01\x02\x10", AIR_RATE_2400, 1, 1);
 }
 
-Driver Create_Driver(const char *topic, const char air_data_rate,
+Driver Create_Driver(const unsigned char *topic, const unsigned char air_data_rate,
                      const int is_fixed, const int full_power) {
   PinMap pins = {PIN_M0, PIN_M1, PIN_AUX};
   RadioParams params = {
@@ -154,7 +153,7 @@ Driver Create_Driver(const char *topic, const char air_data_rate,
   return Driver_Create(pins, &params, &io, &timer, timeouts);
 }
 
-unsigned long Transmit(const char *address, const char *content,
+unsigned long Transmit(const unsigned  char *address, const char *content,
                        const unsigned long size) {
   const Destination target = {address[0], address[1], address[2]};
   return Driver_Send(&lora_driver, &target, content, size);
@@ -169,7 +168,7 @@ void tearDown(void) { Publish_Destroy(); }
 
 void test_publish() {
   const char body[] = "23456789A";
-  const char address[3] = {ADDRESS_HIGH, ADDRESS_LOW, LORA_CHANNEL};
+  const unsigned char address[3] = {ADDRESS_HIGH, ADDRESS_LOW, LORA_CHANNEL};
   Publish_Invoke(address, TEST_SUBSCRIBER_PORT, TEST_SUBSCRIBER_ID, body);
   TEST_ASSERT_EQUAL_CHAR_ARRAY(body + 1, spy_pushed_content + 4,
                                MESSAGE_BODY_LENGTH - 1);
@@ -182,7 +181,7 @@ void test_pull() {
   unsigned char port = 0;
   char body[MESSAGE_LENGTH + 3];
   memset(body, '\x00', sizeof(body));
-  const char address[3] = {ADDRESS_HIGH, ADDRESS_LOW, LORA_CHANNEL};
+  const unsigned char address[3] = {ADDRESS_HIGH, ADDRESS_LOW, LORA_CHANNEL};
   Result result = Pull_Invoke(address, &port, &id, body);
   Serial.print("Result: ");
   switch (result) {
@@ -200,11 +199,11 @@ void test_pull() {
   }
   Serial.print("Message body: ");
   print_chars((const char *)body, sizeof(body));
-//  TEST_ASSERT_NOT_EQUAL(id, TEST_SUBSCRIBER_ID);
-//  TEST_ASSERT_NOT_EQUAL(port, TEST_SUBSCRIBER_PORT);
-//  TEST_ASSERT_NOT_EQUAL(body[0], '\x00');
-//  TEST_ASSERT_NOT_EQUAL(body[2], '\x00');
-//  TEST_ASSERT_NOT_EQUAL(body[4], '\x00');
+  TEST_ASSERT_NOT_EQUAL(id, TEST_SUBSCRIBER_ID);
+  TEST_ASSERT_NOT_EQUAL(port, TEST_SUBSCRIBER_PORT);
+  TEST_ASSERT_NOT_EQUAL(body[0], '\x00');
+  TEST_ASSERT_NOT_EQUAL(body[2], '\x00');
+  TEST_ASSERT_NOT_EQUAL(body[4], '\x00');
   //  Transceiver.ReadParameters();
   //  Transceiver.PrintParameters();
 }
@@ -222,7 +221,7 @@ void print_chars(const char *anArray, unsigned long size) {
 
 void setup() {
   InitArduino();
-  //UNITY_BEGIN();
+  UNITY_BEGIN();
   memset(spy_pushed_content, '\0', MESSAGE_LENGTH);
   Serial.println("Creating driver");
   InitDriver();
@@ -231,8 +230,7 @@ void setup() {
 }
 
 void loop() {
-  test_pull();
-  //RUN_TEST(test_pull);
-  //UNITY_END();
-  //delay(2000);
+  RUN_TEST(test_publish);
+  UNITY_END();
+  delay(2000);
 }

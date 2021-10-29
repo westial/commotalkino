@@ -16,13 +16,13 @@ typedef struct PinMap {
 } PinMap;
 
 typedef struct Driver {
-  char address[2];
-  char channel;
+  unsigned char address[2];
+  unsigned char channel;
   void* send;
   PinMap pins;
 } Driver;
 
-Driver Driver_Create(PinMap* pins, const char* address, const char* channel);
+Driver Driver_Create(PinMap* pins, const unsigned char* address, const unsigned char* channel);
 
 #ifdef __cplusplus
 }
