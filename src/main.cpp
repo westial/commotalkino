@@ -155,11 +155,8 @@ unsigned long WriteToSerial(unsigned char *content, unsigned long size) {
 unsigned long ReadFromSerial(unsigned char *content, unsigned long size,
                              unsigned long position) {
   while (SSerial.available() > 0 && position <= size) {
-    // FIXME content must be unsigned
     unsigned char input = SSerial.read();
-    Serial.println(input, HEX);
-    if ('\n' == input)
-      break;
+    // Serial.println(input, HEX);
     content[position] = input;
     position++;
   }
@@ -315,11 +312,11 @@ void print_state(Driver *driver) {
 
 void print_bytes(const unsigned char *body, int size) {
   int i;
-  for (i = 0; i + 1 < size; i++) {
+  Serial.print("|");
+  for (i = 0; i < size; i++) {
     Serial.print(body[i], HEX);
     Serial.print("|");
   }
-  Serial.print(body[i], HEX);
   Serial.println();
 }
 
