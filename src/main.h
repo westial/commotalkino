@@ -23,7 +23,7 @@
 #define LISTEN_LED_PIN 11
 #define PING_PIN 12
 
-#define COMMOTALKIE_SALT "RtfgY,u-jk3"
+#define COMMOTALKIE_SALT "1111111111"
 
 #define MODE_TIMEOUT 4000
 #define SERIAL_TIMEOUT 5000
@@ -35,10 +35,11 @@
 #define COMMON_PORT 0xC6
 
 #pragma pack(push)
-#pragma pack(2)
+#pragma pack(4)
 
 typedef struct Ball {
   unsigned long hit;
+  unsigned char remaining[MESSAGE_BODY_LENGTH - sizeof(unsigned long)];
 } Ball;
 
 #pragma pack(pop)
@@ -56,23 +57,26 @@ void InitArduino();
 void InitDriver();
 int InitPublisher();
 int InitSubscriber();
-Ball to_ball(const char* body);
-void from_ball(Ball ball, char* body);
-void Pull(char *body);
+Ball to_ball(const unsigned char *body);
+void from_ball(Ball ball, unsigned char *body);
+void Pull(unsigned char *body);
 void i_receive();
 void i_publish();
-void OneToOne(const char *body);
-void Publish(const unsigned char address[3], const char *body);
-void Broadcast(const char *body);
+void OneToOne(const unsigned char *body);
+void Publish(const unsigned char address[3], const unsigned char *body);
+void Broadcast(const unsigned char *body);
 Driver Create_Driver(const unsigned char *, unsigned char, int, int);
 extern "C" void ClearSerial();
-extern "C" unsigned long WriteToSerial(void *content, unsigned long size);
-extern "C" unsigned long ReadFromSerial(char *content, unsigned long size, unsigned long position);
+extern "C" unsigned long WriteToSerial(unsigned char *content, unsigned long size);
+extern "C" unsigned long ReadFromSerial(unsigned char *content, unsigned long size, unsigned long position);
 extern "C" int DigitalRead(unsigned char pin);
 extern "C" void DigitalWrite(unsigned char pin, unsigned char value);
 extern "C" unsigned long Millis();
-extern "C" unsigned long Transmit(const unsigned char* address, const char* content, unsigned long size);
-extern "C" int Listen(const unsigned char* address, char* content, unsigned long size);
+extern "C" unsigned long Transmit(const unsigned char* address,
+                                  const unsigned char *content,
+                                  const unsigned long size);
+extern "C" int Listen(const unsigned char* address, unsigned char *content,
+                      const unsigned long size);
 extern "C" void TurnOn();
 extern "C" void TurnOff();
 

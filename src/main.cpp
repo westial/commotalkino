@@ -4,13 +4,14 @@
 #define BROADCAST_ADDRESS_LOW 0xFF
 
 #define PING_ADDRESS_HIGH 0x00
-#define PING_ADDRESS_LOW 0xA1
-#define PING_ID 0xAA
+#define PING_ADDRESS_LOW 0x01
+#define PING_ID 0x11
 #define PONG_ADDRESS_HIGH 0x00
-#define PONG_ADDRESS_LOW 0xB1
-#define PONG_ID 0xBB
+#define PONG_ADDRESS_LOW 0x02
+#define PONG_ID 0x22
 
 #define PING_PONG_INTERVAL 2000
+#define HIT_START 55
 
 // -----------------------------------------------------------------------------
 // Additional Headers
@@ -37,6 +38,7 @@ LoraConfig her_config;
 const unsigned long receiving_timeout = PULL_TIMEOUT;
 
 unsigned long loop_count;
+unsigned long hit;
 unsigned long last_hit;
 
 // -----------------------------------------------------------------------------
@@ -143,17 +145,19 @@ Driver Create_Driver(const unsigned char *topic,
 // -----------------------------------------------------------------------------
 // Driver Dependencies
 
-unsigned long WriteToSerial(void *content, unsigned long size) {
+unsigned long WriteToSerial(unsigned char *content, unsigned long size) {
   //  Serial.print("WriteToSerial: ");
   //  print_chars((char *)content, size);
-  unsigned long written = SSerial.write((char *)content, size);
+  unsigned long written = SSerial.write(content, size);
   return written;
 }
 
-unsigned long ReadFromSerial(char *content, unsigned long size,
+unsigned long ReadFromSerial(unsigned char *content, unsigned long size,
                              unsigned long position) {
   while (SSerial.available() > 0 && position <= size) {
-    char input = static_cast<char>(SSerial.read());
+    // FIXME content must be unsigned
+    unsigned char input = SSerial.read();
+    Serial.println(input, HEX);
     if ('\n' == input)
       break;
     content[position] = input;
@@ -194,56 +198,57 @@ unsigned long Millis() {
 // -----------------------------------------------------------------------------
 // CommoTalkie Dependencies
 
-unsigned long Transmit(const unsigned char *address, const char *content,
+unsigned long Transmit(const unsigned char *address,
+                       const unsigned char *content,
                        const unsigned long size) {
-  //  Serial.print("Transmit: ");
-  //  print_chars(content, size);
+  Serial.print("Transmit content: ");
+  print_bytes(content, size);
   const Destination target = {address[0], address[1], address[2]};
   return Driver_Send(&lora_driver, &target, content, size);
 }
 
-int Listen(const unsigned char *address, char *content,
+int Listen(const unsigned char *address, unsigned char *content,
            const unsigned long size) {
   int result = Driver_Receive(&lora_driver, content, size);
   if (0 != result) {
     Serial.print("Listen content: ");
-    print_bytes((unsigned char *)content, size);
+    print_bytes(content, size);
   }
   return result;
 }
 
 void TurnOn() {
   Driver_TurnOn(&lora_driver);
-//  Serial.print("Turned on: ");
-//  Serial.println(lora_driver.state == NORMAL);
+  //  Serial.print("Turned on: ");
+  //  Serial.println(lora_driver.state == NORMAL);
 }
 
 void TurnOff() {
   Driver_TurnOff(&lora_driver);
-//  Serial.print("Turned off: ");
-//  Serial.println(lora_driver.state == SLEEP);
+  //  Serial.print("Turned off: ");
+  //  Serial.println(lora_driver.state == SLEEP);
 }
 
 // -----------------------------------------------------------------------------
 // Use cases
 
-void Pull(char *body) {
+void Pull(unsigned char *body) {
   unsigned char id = 0;
   unsigned char port = 0;
   const unsigned char address[3] = {my_config.address_high,
                                     my_config.address_low, my_config.channel};
   memset(body, 0, sizeof(Ball));
-//  Serial.print("Pull address: ");
-//  print_bytes((unsigned char *)address, sizeof(address));
+  //  Serial.print("Pull address: ");
+  //  print_bytes((unsigned char *)address, sizeof(address));
   Result result = Pull_Invoke(address, &port, &id, body);
-//  Serial.print("Pulled message port: ");
-//  Serial.println(port, HEX);
-//  Serial.print("Pulled message id: ");
-//  Serial.println(id, HEX);
-//  Serial.print("My id: ");
-//  Serial.println(my_config.id, HEX);
-//  Serial.print("Pulled body: ");
-//  print_bytes((unsigned char *)body, MESSAGE_BODY_LENGTH);
+  //  Serial.print("Pulled message port: ");
+  //  Serial.println(port, HEX);
+  //  Serial.print("Pulled message id: ");
+  //  Serial.println(id, HEX);
+  //  Serial.print("My id: ");
+  //  Serial.println(my_config.id, HEX);
+  Serial.print("Pulled body: ");
+  print_bytes(body, MESSAGE_BODY_LENGTH);
   Serial.print("Result: ");
   switch (result) {
   case Success:
@@ -254,6 +259,7 @@ void Pull(char *body) {
     Serial.println("Timeout");
     break;
   case IOError:
+    loop_count = 0;
     Serial.println("IOError XX---XXXXXX---XXXXXX---XXXXXX---XXXXXX---XX");
     break;
   default:
@@ -261,42 +267,42 @@ void Pull(char *body) {
   }
 }
 
-void OneToOne(const char *body) {
+void OneToOne(const unsigned char *body) {
   const unsigned char address[3] = {her_config.address_high,
                                     her_config.address_low, her_config.channel};
   Publish(address, body);
 }
 
-void Publish(const unsigned char address[3], const char *body) {
-//  Serial.print("Publish to port: ");
-//  Serial.println(her_config.port, HEX);
-//  Serial.print("Publish to id: ");
-//  Serial.println(her_config.id, HEX);
-//  Serial.print("Publish to address: ");
-//  print_bytes(address, 3);
-//  Serial.print("Publish body: ");
-//  print_bytes((unsigned char *)body, 9);
+void Publish(const unsigned char address[3], const unsigned char *body) {
+  //  Serial.print("Publish to port: ");
+  //  Serial.println(her_config.port, HEX);
+  //  Serial.print("Publish to id: ");
+  //  Serial.println(her_config.id, HEX);
+  //  Serial.print("Publish to address: ");
+  //  print_bytes(address, 3);
+  Serial.print("Publish body: ");
+  print_bytes(body, 9);
   Publish_Invoke(address, her_config.port, her_config.id, body);
 }
 
-void Broadcast(const char *body) {
+void Broadcast(const unsigned char *body) {
   const unsigned char address[3] = {BROADCAST_ADDRESS_HIGH,
                                     BROADCAST_ADDRESS_LOW, LORA_CHANNEL};
   Publish(address, body);
 }
 
-Ball to_ball(const char *body) {
+Ball to_ball(const unsigned char *body) {
   Ball ball;
-  memcpy((void *)&ball, body, sizeof(Ball));
-  //  Serial.print("To ball: ");
-  //  print_bytes(body, sizeof(Ball));
+  memcpy((unsigned char *)&ball, body, sizeof(Ball));
+  Serial.print("To ball: ");
+  print_bytes((const unsigned char *)body, sizeof(Ball));
   return ball;
 }
 
-void from_ball(Ball ball, char *body) {
-  //  Serial.print("From ball: ");
-  //  print_bytes((const char *)&ball, sizeof(Ball));
-  memcpy(body, (const void *)&ball, sizeof(Ball));
+void from_ball(Ball ball, unsigned char *body) {
+  Serial.print("From ball: ");
+  print_bytes((const unsigned char *)&ball, sizeof(Ball));
+  memcpy(body, (const unsigned char *)&ball, sizeof(Ball));
 }
 
 // -----------------------------------------------------------------------------
@@ -340,24 +346,24 @@ void setup() {
   InitSubscriber();
   set_config(PING_PIN);
   loop_count = 0;
-  last_hit = 0;
+  last_hit = HIT_START;
+  hit = HIT_START;
 }
 
 void i_receive() {
-  char body[MESSAGE_BODY_LENGTH];
   Ball ball;
-  Pull(body);
-  ball = to_ball(body);
+  Pull((unsigned char*)&ball);
+  //ball = to_ball(body);
   Serial.print("Got Hit: ");
   Serial.println(ball.hit);
+  hit = ball.hit;
 }
 
 void i_publish() {
-  char body[MESSAGE_BODY_LENGTH];
   Ball ball;
-  ball.hit = loop_count;
-  from_ball(ball, body);
-  Broadcast(body);
+  ball.hit = hit;
+  //from_ball(ball, body);
+  Broadcast((unsigned char*)&ball);
   Serial.print("Given Hit: ");
   Serial.println(ball.hit);
 }
@@ -367,28 +373,41 @@ void ping_pong() {
     Serial.println("I am Ping");
   } else {
     i_receive();
-    delay(PING_PONG_INTERVAL);
+    //delay(PING_PONG_INTERVAL);
   }
   i_publish();
   loop_count++;
+  hit = loop_count;
+  Serial.print("Succeeded loop count: ");
+  Serial.println(loop_count);
 }
 
 void assert_ping_pong() {
-  if (0 == loop_count && my_config.do_i_ping) {
+  if (HIT_START == hit && my_config.do_i_ping) {
     Serial.println("I am Ping");
+    delay(PING_PONG_INTERVAL);
+    ++hit;
+    i_publish();
+    return;
   } else {
     i_receive();
-    if (++last_hit > loop_count) {
-      Serial.print("Error at loop_count: ");
-      Serial.println(loop_count);
-      loop_count = 0;
+    Serial.print("Last vs hit: ");
+    Serial.print(last_hit);
+    Serial.print(" vs ");
+    Serial.println(hit);
+    if (last_hit == hit) {
+      Serial.print("Error at hit: ");
+      Serial.println(hit);
+      Serial.println("Hit Error X-X-X-X-X--------=hit=--------X-X-X-X-X-X-X");
+      hit = HIT_START;
+      delay(PING_PONG_INTERVAL);
       assert_ping_pong();
+    } else {
+      ++hit;
     }
   }
-  delay(PING_PONG_INTERVAL);
+  last_hit = hit;
   i_publish();
 }
 
-void loop() {
-  ping_pong();
-}
+void loop() { assert_ping_pong(); }

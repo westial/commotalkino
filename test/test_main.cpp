@@ -23,14 +23,14 @@ const unsigned long receiving_timeout = PULL_TIMEOUT;
 // create the transceiver object, passing in the serial and pins
 // EByte Transceiver(&SSerial, PIN_M0, PIN_M1, PIN_AUX);
 
-unsigned long WriteToSerial(void *content, unsigned long size) {
+unsigned long WriteToSerial(unsigned char *content, unsigned long size) {
   memcpy(spy_pushed_content, (char *)content + 3, MESSAGE_LENGTH);
 //  Serial.print("WriteToSerial           ");
 //  print_chars((const char *)content, size);
   return SSerial.write((char *)content, size);
 }
 
-unsigned long ReadFromSerial(char *content, unsigned long size, unsigned long position) {
+unsigned long ReadFromSerial(unsigned char *content, unsigned long size, unsigned long position) {
 //  if (SSerial.available()) {
 //    Serial.print("SpyReadFromSerial avail ");
 //    Serial.println(SSerial.available());
@@ -85,7 +85,7 @@ unsigned long Millis() {
   return log;
 }
 
-int Listen(const unsigned char *address, char *content, const unsigned long size) {
+int Listen(const unsigned char *address, unsigned char *content, const unsigned long size) {
   // TODO Reconfigure if the address is different in driver
   return Driver_Receive(&lora_driver, content, size);
 }
@@ -159,7 +159,8 @@ Driver Create_Driver(const unsigned char *topic, const unsigned char air_data_ra
   return Driver_Create(pins, &params, &io, &timer, timeouts);
 }
 
-unsigned long Transmit(const unsigned  char *address, const char *content,
+unsigned long Transmit(const unsigned  char *address,
+                       const unsigned char *content,
                        const unsigned long size) {
   const Destination target = {address[0], address[1], address[2]};
   return Driver_Send(&lora_driver, &target, content, size);
