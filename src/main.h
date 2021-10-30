@@ -65,6 +65,7 @@ void OneToOne(const char *body);
 void Publish(const unsigned char address[3], const char *body);
 void Broadcast(const char *body);
 Driver Create_Driver(const unsigned char *, unsigned char, int, int);
+extern "C" void ClearSerial();
 extern "C" unsigned long WriteToSerial(void *content, unsigned long size);
 extern "C" unsigned long ReadFromSerial(char *content, unsigned long size, unsigned long position);
 extern "C" int DigitalRead(unsigned char pin);

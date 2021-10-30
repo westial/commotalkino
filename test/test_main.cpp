@@ -23,14 +23,14 @@ const unsigned long receiving_timeout = PULL_TIMEOUT;
 // create the transceiver object, passing in the serial and pins
 // EByte Transceiver(&SSerial, PIN_M0, PIN_M1, PIN_AUX);
 
-extern "C" unsigned long SpyWriteToSerial(void *content, unsigned long size) {
+unsigned long WriteToSerial(void *content, unsigned long size) {
   memcpy(spy_pushed_content, (char *)content + 3, MESSAGE_LENGTH);
 //  Serial.print("WriteToSerial           ");
 //  print_chars((const char *)content, size);
   return SSerial.write((char *)content, size);
 }
 
-extern "C" unsigned long SpyReadFromSerial(char *content, unsigned long size, unsigned long position) {
+unsigned long ReadFromSerial(char *content, unsigned long size, unsigned long position) {
 //  if (SSerial.available()) {
 //    Serial.print("SpyReadFromSerial avail ");
 //    Serial.println(SSerial.available());
@@ -50,9 +50,15 @@ extern "C" unsigned long SpyReadFromSerial(char *content, unsigned long size, un
   return position;
 }
 
+void ClearSerial() {
+  while (SSerial.available() > 0) {
+    SSerial.read();
+  }
+}
+
 static int last_aux = 0;
 
-extern "C" int DigitalRead(unsigned char pin) {
+int DigitalRead(unsigned char pin) {
   int value = digitalRead(pin);
 //  if (0 == last_aux && 1 == value) Serial.println("DigitalRead aux is high again");
   last_aux = value;
@@ -63,7 +69,7 @@ extern "C" int DigitalRead(unsigned char pin) {
   return value;
 }
 
-extern "C" void DigitalWrite(unsigned char pin, unsigned char value) {
+void DigitalWrite(unsigned char pin, unsigned char value) {
   digitalWrite(pin, value);
   delay(1);
 //  Serial.print("DigitalWrite            ");
@@ -72,7 +78,7 @@ extern "C" void DigitalWrite(unsigned char pin, unsigned char value) {
 //  Serial.println(value);
 }
 
-extern "C" unsigned long Millis() {
+unsigned long Millis() {
   const unsigned long log = millis();
 //    Serial.print("Millis                  ");
 //    Serial.println(log);
@@ -148,7 +154,7 @@ Driver Create_Driver(const unsigned char *topic, const unsigned char air_data_ra
       full_power};
   Timer timer = Timer_Create((const void *)Millis);
   IOCallback io = {DigitalRead, DigitalWrite, SpyWriteToSerial,
-                   SpyReadFromSerial};
+                   SpyReadFromSerial, ClearSerial};
   unsigned long timeouts[] = {MODE_TIMEOUT, SERIAL_TIMEOUT};
   return Driver_Create(pins, &params, &io, &timer, timeouts);
 }

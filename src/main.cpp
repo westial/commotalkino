@@ -132,7 +132,8 @@ Driver Create_Driver(const unsigned char *topic,
       is_fixed,
       full_power};
   Timer timer = Timer_Create((const void *)Millis);
-  IOCallback io = {DigitalRead, DigitalWrite, WriteToSerial, ReadFromSerial};
+  IOCallback io = {DigitalRead, DigitalWrite, WriteToSerial, ReadFromSerial,
+                   ClearSerial};
   unsigned long timeouts[] = {MODE_TIMEOUT, SERIAL_TIMEOUT};
   return Driver_Create(pins, &params, &io, &timer, timeouts);
 }
@@ -144,14 +145,13 @@ unsigned long WriteToSerial(void *content, unsigned long size) {
   //  Serial.print("WriteToSerial: ");
   //  print_chars((char *)content, size);
   unsigned long written = SSerial.write((char *)content, size);
-  delay(1);
   return written;
 }
 
 unsigned long ReadFromSerial(char *content, unsigned long size,
                              unsigned long position) {
   while (SSerial.available() > 0 && position <= size) {
-    char input = (char)SSerial.read();
+    char input = static_cast<char>(SSerial.read());
     if ('\n' == input)
       break;
     content[position] = input;
@@ -160,13 +160,18 @@ unsigned long ReadFromSerial(char *content, unsigned long size,
   return position;
 }
 
+void ClearSerial() {
+  while (SSerial.available() > 0) {
+    SSerial.read();
+  }
+}
+
 int DigitalRead(unsigned char pin) {
   int value = digitalRead(pin);
   //  Serial.print("DigitalRead             ");
   //  Serial.print(pin);
   //  Serial.print(" = ");
   //  Serial.println(value);
-  delay(1);
   return value;
 }
 
@@ -205,9 +210,16 @@ int Listen(const unsigned char *address, char *content,
   return result;
 }
 
-void TurnOn() { Driver_TurnOn(&lora_driver); }
+void TurnOn() {
+  Driver_TurnOn(&lora_driver);
+  Serial.print("Turned on: ");
+  Serial.println(lora_driver.state == NORMAL);
+}
 
-void TurnOff() { Driver_TurnOff(&lora_driver); }
+void TurnOff() {
+  Driver_TurnOff(&lora_driver);
+  Serial.print("Turned off: ");
+  Serial.println(lora_driver.state == SLEEP); }
 
 // -----------------------------------------------------------------------------
 // Use cases
@@ -343,6 +355,23 @@ void i_publish() {
   last_hit = ball.hit;
   from_ball(ball, body);
   Broadcast(body);
+}
+
+void loop_ping() {
+  if (my_config.do_i_ping) {
+    Serial.println("I am Ping");
+    i_publish();
+    loop_count++;
+    delay(2000);
+  }
+}
+
+void loop_pong() {
+  if (!my_config.do_i_ping) {
+    Serial.println("I am Pong");
+    i_receive();
+    loop_count++;
+  }
 }
 
 void loop_ping_pong() {
