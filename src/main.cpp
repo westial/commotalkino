@@ -350,7 +350,6 @@ void setup() {
 void i_receive() {
   Ball ball;
   Pull((unsigned char*)&ball);
-  //ball = to_ball(body);
   Serial.print("Got Hit: ");
   Serial.println(ball.hit);
   hit = ball.hit;
@@ -359,7 +358,6 @@ void i_receive() {
 void i_publish() {
   Ball ball;
   ball.hit = hit;
-  //from_ball(ball, body);
   Broadcast((unsigned char*)&ball);
   Serial.print("Given Hit: ");
   Serial.println(ball.hit);
