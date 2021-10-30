@@ -10,6 +10,8 @@
 #define PONG_ADDRESS_LOW 0xB1
 #define PONG_ID 0xBB
 
+#define PING_PONG_INTERVAL 2000
+
 // -----------------------------------------------------------------------------
 // Additional Headers
 
@@ -212,14 +214,15 @@ int Listen(const unsigned char *address, char *content,
 
 void TurnOn() {
   Driver_TurnOn(&lora_driver);
-  Serial.print("Turned on: ");
-  Serial.println(lora_driver.state == NORMAL);
+//  Serial.print("Turned on: ");
+//  Serial.println(lora_driver.state == NORMAL);
 }
 
 void TurnOff() {
   Driver_TurnOff(&lora_driver);
-  Serial.print("Turned off: ");
-  Serial.println(lora_driver.state == SLEEP); }
+//  Serial.print("Turned off: ");
+//  Serial.println(lora_driver.state == SLEEP);
+}
 
 // -----------------------------------------------------------------------------
 // Use cases
@@ -230,17 +233,17 @@ void Pull(char *body) {
   const unsigned char address[3] = {my_config.address_high,
                                     my_config.address_low, my_config.channel};
   memset(body, 0, sizeof(Ball));
-  Serial.print("Pull address: ");
-  print_bytes((unsigned char *)address, sizeof(address));
+//  Serial.print("Pull address: ");
+//  print_bytes((unsigned char *)address, sizeof(address));
   Result result = Pull_Invoke(address, &port, &id, body);
-  Serial.print("Pulled message port: ");
-  Serial.println(port, HEX);
-  Serial.print("Pulled message id: ");
-  Serial.println(id, HEX);
-  Serial.print("My id: ");
-  Serial.println(my_config.id, HEX);
-  Serial.print("Pulled body: ");
-  print_bytes((unsigned char *)body, MESSAGE_BODY_LENGTH);
+//  Serial.print("Pulled message port: ");
+//  Serial.println(port, HEX);
+//  Serial.print("Pulled message id: ");
+//  Serial.println(id, HEX);
+//  Serial.print("My id: ");
+//  Serial.println(my_config.id, HEX);
+//  Serial.print("Pulled body: ");
+//  print_bytes((unsigned char *)body, MESSAGE_BODY_LENGTH);
   Serial.print("Result: ");
   switch (result) {
   case Success:
@@ -265,14 +268,14 @@ void OneToOne(const char *body) {
 }
 
 void Publish(const unsigned char address[3], const char *body) {
-  Serial.print("Publish to port: ");
-  Serial.println(her_config.port, HEX);
-  Serial.print("Publish to id: ");
-  Serial.println(her_config.id, HEX);
-  Serial.print("Publish to address: ");
-  print_bytes(address, 3);
-  Serial.print("Publish body: ");
-  print_bytes((unsigned char *)body, 9);
+//  Serial.print("Publish to port: ");
+//  Serial.println(her_config.port, HEX);
+//  Serial.print("Publish to id: ");
+//  Serial.println(her_config.id, HEX);
+//  Serial.print("Publish to address: ");
+//  print_bytes(address, 3);
+//  Serial.print("Publish body: ");
+//  print_bytes((unsigned char *)body, 9);
   Publish_Invoke(address, her_config.port, her_config.id, body);
 }
 
@@ -337,6 +340,7 @@ void setup() {
   InitSubscriber();
   set_config(PING_PIN);
   loop_count = 0;
+  last_hit = 0;
 }
 
 void i_receive() {
@@ -352,38 +356,39 @@ void i_publish() {
   char body[MESSAGE_BODY_LENGTH];
   Ball ball;
   ball.hit = loop_count;
-  last_hit = ball.hit;
   from_ball(ball, body);
   Broadcast(body);
+  Serial.print("Given Hit: ");
+  Serial.println(ball.hit);
 }
 
-void loop_ping() {
-  if (my_config.do_i_ping) {
-    Serial.println("I am Ping");
-    i_publish();
-    loop_count++;
-    delay(2000);
-  }
-}
-
-void loop_pong() {
-  if (!my_config.do_i_ping) {
-    Serial.println("I am Pong");
-    i_receive();
-    loop_count++;
-  }
-}
-
-void loop_ping_pong() {
+void ping_pong() {
   if (0 == loop_count && my_config.do_i_ping) {
     Serial.println("I am Ping");
   } else {
     i_receive();
+    delay(PING_PONG_INTERVAL);
   }
   i_publish();
   loop_count++;
 }
 
+void assert_ping_pong() {
+  if (0 == loop_count && my_config.do_i_ping) {
+    Serial.println("I am Ping");
+  } else {
+    i_receive();
+    if (++last_hit > loop_count) {
+      Serial.print("Error at loop_count: ");
+      Serial.println(loop_count);
+      loop_count = 0;
+      assert_ping_pong();
+    }
+  }
+  delay(PING_PONG_INTERVAL);
+  i_publish();
+}
+
 void loop() {
-  loop_ping_pong();
+  ping_pong();
 }
