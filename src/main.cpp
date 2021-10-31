@@ -4,11 +4,11 @@
 #define BROADCAST_ADDRESS_LOW 0xFF
 
 #define PING_ADDRESS_HIGH 0x00
-#define PING_ADDRESS_LOW 0x01
-#define PING_ID 0x11
+#define PING_ADDRESS_LOW 0xA1
+#define PING_ID 0xAA
 #define PONG_ADDRESS_HIGH 0x00
-#define PONG_ADDRESS_LOW 0x02
-#define PONG_ID 0x22
+#define PONG_ADDRESS_LOW 0xB1
+#define PONG_ID 0xBB
 
 #define PING_PONG_INTERVAL 2000
 #define HIT_START 55
@@ -156,7 +156,7 @@ unsigned long ReadFromSerial(unsigned char *content, unsigned long size,
                              unsigned long position) {
   while (SSerial.available() > 0 && position <= size) {
     unsigned char input = SSerial.read();
-    // Serial.println(input, HEX);
+    //Serial.println(input, HEX);
     content[position] = input;
     position++;
   }
