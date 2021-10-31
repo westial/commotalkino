@@ -3,12 +3,12 @@
 
 #include "../lib/CommoTalkie/Driver.h"
 #include "../lib/CommoTalkie/EByte.h"
-#include "../lib/CommoTalkie/PublisherBuilder.h"
-#include "../lib/CommoTalkie/messageconfig.h"
 #include "../lib/CommoTalkie/Message.h"
 #include "../lib/CommoTalkie/Publish.h"
+#include "../lib/CommoTalkie/PublisherBuilder.h"
 #include "../lib/CommoTalkie/Pull.h"
 #include "../lib/CommoTalkie/SubscriberBuilder.h"
+#include "../lib/CommoTalkie/messageconfig.h"
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 
@@ -57,27 +57,31 @@ void InitArduino();
 void InitDriver();
 int InitPublisher();
 int InitSubscriber();
-Ball to_ball(const unsigned char *body);
-void from_ball(Ball ball, unsigned char *body);
 void Pull(unsigned char *body);
 void i_receive();
 void i_publish();
 void OneToOne(const unsigned char *body);
 void Publish(const unsigned char address[3], const unsigned char *body);
 void Broadcast(const unsigned char *body);
-Driver Create_Driver(const unsigned char *, unsigned char, int, int);
+Driver Create_Driver(unsigned char address_high, unsigned char address_low,
+                        unsigned char channel, unsigned char air_data_rate,
+                        int is_fixed,
+                        int full_power);
 extern "C" void ClearSerial();
-extern "C" unsigned long WriteToSerial(unsigned char *content, unsigned long size);
-extern "C" unsigned long ReadFromSerial(unsigned char *content, unsigned long size, unsigned long position);
+extern "C" unsigned long WriteToSerial(unsigned char *content,
+                                       unsigned long size);
+extern "C" unsigned long ReadFromSerial(unsigned char *content,
+                                        unsigned long size,
+                                        unsigned long position);
 extern "C" int DigitalRead(unsigned char pin);
 extern "C" void DigitalWrite(unsigned char pin, unsigned char value);
 extern "C" unsigned long Millis();
-extern "C" unsigned long Transmit(const unsigned char* address,
+extern "C" unsigned long Transmit(const unsigned char *address,
                                   const unsigned char *content,
-                                  const unsigned long size);
-extern "C" int Listen(const unsigned char* address, unsigned char *content,
-                      const unsigned long size);
+                                  unsigned long size);
+extern "C" int Listen(const unsigned char *address, unsigned char *content,
+                      unsigned long size);
 extern "C" void TurnOn();
 extern "C" void TurnOff();
 
-#endif //COMMOTALKINO_SRC_MAIN_H_
+#endif // COMMOTALKINO_SRC_MAIN_H_
