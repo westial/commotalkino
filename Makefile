@@ -1,3 +1,4 @@
+COMMOTALKIE_VERSION=0.1.1
 COMMOTALKIE_REPO=git@github.com:westial/commotalkie.git
 LIBRARY_DIR=lib
 SRC_DIR=src
@@ -9,8 +10,7 @@ WORKING_DIR=$(shell pwd)
 deploy:
 	@echo "> Downloading CommoTalkie"
 	cd "$(TMP_DIR)"
-# FIXME cloning a branch!
-	git clone -b "commotalkie-12-ebyte-driver" "git@github.com:westial/commotalkie.git" "$(TMP_DIR)/commotalkie"
+	git clone --depth 1 -b "$(COMMOTALKIE_VERSION)" "git@github.com:westial/commotalkie.git" "$(TMP_DIR)/commotalkie"
 	@echo "> Preparing files"
 	cd "$(TMP_DIR)/commotalkie/arduino" && $(MAKE)
 	cd "$(TMP_DIR)/commotalkie/arduino/prebuild"

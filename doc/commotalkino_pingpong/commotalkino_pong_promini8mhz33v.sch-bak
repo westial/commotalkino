@@ -1,0 +1,348 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title "CommoTalkino Arduino Nano as Ping"
+Date "2021-11-01"
+Rev "1"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L EByte_E32-xxxT20D:E32-915T20D EByte
+U 1 1 617FBB4C
+P 8250 3050
+F 0 "EByte" V 8629 3078 50  0000 L CNN
+F 1 "E32-915T20D" V 8720 3078 50  0000 L CNN
+F 2 "" H 8250 3050 50  0001 C CNN
+F 3 "" V 8766 3078 50  0000 L CNN
+	1    8250 3050
+	0    1    1    0   
+$EndComp
+$Comp
+L atmega328:R Rup1
+U 1 1 617FEF2A
+P 7300 1800
+F 0 "Rup1" H 7371 1846 50  0000 L CNN
+F 1 "4.7K" H 7371 1755 50  0000 L CNN
+F 2 "" H 7300 1800 50  0001 C CNN
+F 3 "" H 7300 1800 50  0001 C CNN
+	1    7300 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L atmega328:R Rup2
+U 1 1 61800299
+P 7850 1800
+F 0 "Rup2" H 7921 1846 50  0000 L CNN
+F 1 "4.7K" H 7921 1755 50  0000 L CNN
+F 2 "" H 7850 1800 50  0001 C CNN
+F 3 "" H 7850 1800 50  0001 C CNN
+	1    7850 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L atmega328:R Rup3
+U 1 1 61801BC0
+P 8400 1800
+F 0 "Rup3" H 8471 1846 50  0000 L CNN
+F 1 "4.7K" H 8471 1755 50  0000 L CNN
+F 2 "" H 8400 1800 50  0001 C CNN
+F 3 "" H 8400 1800 50  0001 C CNN
+	1    8400 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L atmega328:R Rvd1
+U 1 1 618032B9
+P 3250 1900
+F 0 "Rvd1" H 3321 1946 50  0000 L CNN
+F 1 "2.20K" H 3321 1855 50  0000 L CNN
+F 2 "" H 3250 1900 50  0001 C CNN
+F 3 "" H 3250 1900 50  0001 C CNN
+	1    3250 1900
+	-1   0    0    1   
+$EndComp
+$Comp
+L atmega328:R Rvd2
+U 1 1 61803C4B
+P 3800 1900
+F 0 "Rvd2" H 3871 1946 50  0000 L CNN
+F 1 "2.20K" H 3871 1855 50  0000 L CNN
+F 2 "" H 3800 1900 50  0001 C CNN
+F 3 "" H 3800 1900 50  0001 C CNN
+	1    3800 1900
+	-1   0    0    1   
+$EndComp
+$Comp
+L atmega328:R Rvd3
+U 1 1 618040B6
+P 2700 1900
+F 0 "Rvd3" H 2771 1946 50  0000 L CNN
+F 1 "2.20K" H 2771 1855 50  0000 L CNN
+F 2 "" H 2700 1900 50  0001 C CNN
+F 3 "" H 2700 1900 50  0001 C CNN
+	1    2700 1900
+	-1   0    0    1   
+$EndComp
+$Comp
+L atmega328:R Rvd4
+U 1 1 61804B7C
+P 2700 2650
+F 0 "Rvd4" V 2492 2650 50  0000 C CNN
+F 1 "1K" V 2583 2650 50  0000 C CNN
+F 2 "" H 2700 2650 50  0001 C CNN
+F 3 "" H 2700 2650 50  0001 C CNN
+	1    2700 2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L atmega328:R Rvd5
+U 1 1 61806649
+P 3250 2650
+F 0 "Rvd5" V 3042 2650 50  0000 C CNN
+F 1 "1K" V 3133 2650 50  0000 C CNN
+F 2 "" H 3250 2650 50  0001 C CNN
+F 3 "" H 3250 2650 50  0001 C CNN
+	1    3250 2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L atmega328:R Rvd6
+U 1 1 61806909
+P 3800 2650
+F 0 "Rvd6" V 3592 2650 50  0000 C CNN
+F 1 "1K" V 3683 2650 50  0000 C CNN
+F 2 "" H 3800 2650 50  0001 C CNN
+F 3 "" H 3800 2650 50  0001 C CNN
+	1    3800 2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L atmega328:R Rping
+U 1 1 61809DA4
+P 4550 4650
+F 0 "Rping" H 4621 4696 50  0000 L CNN
+F 1 "1.5K" H 4621 4605 50  0000 L CNN
+F 2 "" H 4550 4650 50  0001 C CNN
+F 3 "" H 4550 4650 50  0001 C CNN
+	1    4550 4650
+	-1   0    0    1   
+$EndComp
+$Comp
+L MCU_Module:Arduino_Nano_Every I_am_Ping
+U 1 1 6180ACCA
+P 5300 3350
+F 0 "I_am_Ping" H 5300 2261 50  0000 C CNN
+F 1 "Arduino_Nano_Every" H 5300 2170 50  0000 C CNN
+F 2 "Module:Arduino_Nano" H 5300 3350 50  0001 C CIN
+F 3 "https://content.arduino.cc/assets/NANOEveryV3.0_sch.pdf" H 5300 3350 50  0001 C CNN
+	1    5300 3350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7750 2550 7300 2550
+Wire Wire Line
+	7300 2550 7300 2150
+Wire Wire Line
+	7850 2950 7850 2450
+Wire Wire Line
+	7950 2550 8400 2550
+Wire Wire Line
+	8400 2550 8400 2300
+Wire Wire Line
+	7550 2950 7300 2950
+Wire Wire Line
+	7300 2950 7300 4150
+$Comp
+L power:GNDREF #PWR?
+U 1 1 61827487
+P 7300 4150
+F 0 "#PWR?" H 7300 3900 50  0001 C CNN
+F 1 "GNDREF" H 7305 3977 50  0001 C CNN
+F 2 "" H 7300 4150 50  0001 C CNN
+F 3 "" H 7300 4150 50  0001 C CNN
+	1    7300 4150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7650 2950 7650 2750
+Wire Wire Line
+	7650 2750 6500 2750
+Wire Wire Line
+	6500 2750 6500 2100
+Wire Wire Line
+	6500 2100 5400 2100
+Wire Wire Line
+	5400 2100 5400 2350
+Wire Wire Line
+	4800 3950 4550 3950
+Wire Wire Line
+	4550 5200 6050 5200
+Wire Wire Line
+	6050 5200 6050 2250
+Wire Wire Line
+	6050 2250 5500 2250
+Wire Wire Line
+	5500 2250 5500 2350
+$Comp
+L OLIMEX_Power:+5V #PWR?
+U 1 1 6182BF08
+P 6050 5400
+F 0 "#PWR?" H 6050 5250 50  0001 C CNN
+F 1 "+5V" H 6065 5573 50  0000 C CNN
+F 2 "" H 6050 5400 60  0000 C CNN
+F 3 "" H 6050 5400 60  0000 C CNN
+	1    6050 5400
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6050 5400 6050 5200
+Connection ~ 6050 5200
+$Comp
+L power:GNDREF #PWR?
+U 1 1 6182F300
+P 5300 4850
+F 0 "#PWR?" H 5300 4600 50  0001 C CNN
+F 1 "GNDREF" H 5305 4677 50  0001 C CNN
+F 2 "" H 5300 4850 50  0001 C CNN
+F 3 "" H 5300 4850 50  0001 C CNN
+	1    5300 4850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5300 4350 5300 4850
+Wire Wire Line
+	4550 5200 4550 4900
+Wire Wire Line
+	4550 4400 4550 3950
+Wire Wire Line
+	4800 3350 2700 3350
+Wire Wire Line
+	4800 3250 3250 3250
+Wire Wire Line
+	3250 3250 3250 2900
+$Comp
+L power:GNDREF #PWR?
+U 1 1 6189612E
+P 2150 1650
+F 0 "#PWR?" H 2150 1400 50  0001 C CNN
+F 1 "GNDREF" H 2155 1477 50  0001 C CNN
+F 2 "" H 2150 1650 50  0001 C CNN
+F 3 "" H 2150 1650 50  0001 C CNN
+	1    2150 1650
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2150 1650 2700 1650
+Wire Wire Line
+	3250 1650 2700 1650
+Connection ~ 2700 1650
+Wire Wire Line
+	2700 2400 2700 2350
+Wire Wire Line
+	3250 2400 3250 2200
+Wire Wire Line
+	2700 3350 2700 2900
+Wire Wire Line
+	2700 2350 2150 2350
+Wire Wire Line
+	2150 2350 2150 5700
+Wire Wire Line
+	2150 5700 8850 5700
+Wire Wire Line
+	8850 5700 8850 2900
+Wire Wire Line
+	8850 2900 8150 2900
+Wire Wire Line
+	8150 2900 8150 2950
+Connection ~ 2700 2350
+Wire Wire Line
+	2700 2350 2700 2150
+Wire Wire Line
+	3250 2200 2000 2200
+Wire Wire Line
+	2000 2200 2000 5850
+Wire Wire Line
+	2000 5850 9000 5850
+Wire Wire Line
+	9000 5850 9000 2800
+Wire Wire Line
+	9000 2800 8050 2800
+Wire Wire Line
+	8050 2800 8050 2950
+Connection ~ 3250 2200
+Wire Wire Line
+	3250 2200 3250 2150
+Wire Wire Line
+	4800 3150 4150 3150
+Wire Wire Line
+	4150 3150 4150 6000
+Wire Wire Line
+	4150 6000 9150 6000
+Wire Wire Line
+	6050 2250 6050 1550
+Wire Wire Line
+	6050 1550 7300 1550
+Connection ~ 6050 2250
+Wire Wire Line
+	7300 1550 7850 1550
+Connection ~ 7300 1550
+Wire Wire Line
+	7850 1550 8400 1550
+Connection ~ 7850 1550
+Wire Wire Line
+	4800 2950 3800 2950
+Wire Wire Line
+	3800 2950 3800 2900
+Wire Wire Line
+	3800 1650 3250 1650
+Connection ~ 3250 1650
+Wire Wire Line
+	7950 2950 7950 2550
+Wire Wire Line
+	3800 2400 3800 2200
+Wire Wire Line
+	7750 2550 7750 2950
+Wire Wire Line
+	9150 2150 7300 2150
+Wire Wire Line
+	9150 2150 9150 6000
+Connection ~ 7300 2150
+Wire Wire Line
+	7300 2150 7300 2050
+Wire Wire Line
+	8400 2300 7100 2300
+Wire Wire Line
+	7100 2300 7100 1650
+Wire Wire Line
+	7100 1650 4000 1650
+Wire Wire Line
+	4000 1650 4000 2200
+Wire Wire Line
+	4000 2200 3800 2200
+Connection ~ 8400 2300
+Wire Wire Line
+	8400 2300 8400 2050
+Connection ~ 3800 2200
+Wire Wire Line
+	3800 2200 3800 2150
+Wire Wire Line
+	7850 2450 6950 2450
+Wire Wire Line
+	6950 2450 6950 1800
+Wire Wire Line
+	6950 1800 4100 1800
+Wire Wire Line
+	4100 1800 4100 2850
+Wire Wire Line
+	4100 2850 4800 2850
+Connection ~ 7850 2450
+Wire Wire Line
+	7850 2450 7850 2050
+$EndSCHEMATC

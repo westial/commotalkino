@@ -18,7 +18,7 @@
 #if 1 == DEBUG
 #define LET_HER_PREPARE_DELAY 250
 #else
-#define LET_HER_PREPARE_DELAY 0
+#define LET_HER_PREPARE_DELAY 30
 #endif
 
 
@@ -320,7 +320,7 @@ void print_chars(const char *anArray, unsigned long size) {
 
 void blink(int pin) {
   digitalWrite(pin, HIGH);
-  delay(50);
+  delay(10);
   digitalWrite(pin, LOW);
 }
 

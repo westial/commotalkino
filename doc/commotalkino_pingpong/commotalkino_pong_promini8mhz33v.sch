@@ -1,0 +1,175 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title "CommoTalkino Arduino Pro Mini 3.3v as Ping"
+Date "2021-11-01"
+Rev "1"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L EByte_E32-xxxT20D:E32-915T20D EByte
+U 1 1 617FBB4C
+P 6950 3000
+F 0 "EByte" V 7329 3028 50  0000 L CNN
+F 1 "E32-915T20D" V 7420 3028 50  0000 L CNN
+F 2 "" H 6950 3000 50  0001 C CNN
+F 3 "" V 7466 3028 50  0000 L CNN
+	1    6950 3000
+	1    0    0    -1  
+$EndComp
+$Comp
+L atmega328:R Rping
+U 1 1 61809DA4
+P 5900 2250
+F 0 "Rping" H 5971 2296 50  0000 L CNN
+F 1 "1.5K" H 5971 2205 50  0000 L CNN
+F 2 "" H 5900 2250 50  0001 C CNN
+F 3 "" H 5900 2250 50  0001 C CNN
+	1    5900 2250
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GNDREF #PWR?
+U 1 1 61827487
+P 6850 3950
+F 0 "#PWR?" H 6850 3700 50  0001 C CNN
+F 1 "GNDREF" H 6855 3777 50  0001 C CNN
+F 2 "" H 6850 3950 50  0001 C CNN
+F 3 "" H 6850 3950 50  0001 C CNN
+	1    6850 3950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDREF #PWR?
+U 1 1 6182F300
+P 5900 1750
+F 0 "#PWR?" H 5900 1500 50  0001 C CNN
+F 1 "GNDREF" H 5905 1577 50  0001 C CNN
+F 2 "" H 5900 1750 50  0001 C CNN
+F 3 "" H 5900 1750 50  0001 C CNN
+	1    5900 1750
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6850 3700 6850 3950
+Wire Wire Line
+	5900 2000 5900 1850
+$Comp
+L power:GNDREF #PWR?
+U 1 1 61818AA6
+P 5800 4950
+F 0 "#PWR?" H 5800 4700 50  0001 C CNN
+F 1 "GNDREF" H 5805 4777 50  0001 C CNN
+F 2 "" H 5800 4950 50  0001 C CNN
+F 3 "" H 5800 4950 50  0001 C CNN
+	1    5800 4950
+	0    -1   -1   0   
+$EndComp
+$Comp
+L customjaume:arduino_mini328_3.3v I_am_Pong
+U 1 1 61805CB1
+P 4850 3400
+F 0 "I_am_Pong" H 4850 1746 70  0000 C CNN
+F 1 "arduino_mini328_3.3v" H 4850 1625 70  0000 C CNN
+F 2 "DIL20" H 4850 1511 60  0001 C CNN
+F 3 "" H 4850 3400 50  0001 C CNN
+	1    4850 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4850 4950 4950 4950
+Connection ~ 4950 4950
+Wire Wire Line
+	4950 4950 5800 4950
+Wire Wire Line
+	5550 2850 5900 2850
+Wire Wire Line
+	5900 2850 5900 2500
+$Comp
+L charger_stepup-cache:LED Listen
+U 1 1 61819FE6
+P 6200 2250
+F 0 "Listen" V 6147 2329 50  0000 L CNN
+F 1 "LED" V 6238 2329 50  0000 L CNN
+F 2 "" H 6200 2250 50  0001 C CNN
+F 3 "" H 6200 2250 50  0001 C CNN
+	1    6200 2250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6200 2100 6200 1850
+Wire Wire Line
+	6200 1850 5900 1850
+Connection ~ 5900 1850
+Wire Wire Line
+	5900 1850 5900 1750
+Wire Wire Line
+	6850 3600 6100 3600
+Wire Wire Line
+	6100 3600 6100 5450
+Wire Wire Line
+	6100 5450 3850 5450
+Wire Wire Line
+	3850 5450 3850 2050
+Wire Wire Line
+	3850 2050 5000 2050
+Wire Wire Line
+	5000 2050 5000 2250
+$Comp
+L OLIMEX_Power:+3.3V #PWR?
+U 1 1 6181C54B
+P 3850 2050
+F 0 "#PWR?" H 3850 1900 50  0001 C CNN
+F 1 "+3.3V" H 3865 2223 50  0000 C CNN
+F 2 "" H 3850 2050 60  0000 C CNN
+F 3 "" H 3850 2050 60  0000 C CNN
+	1    3850 2050
+	1    0    0    -1  
+$EndComp
+Connection ~ 3850 2050
+Wire Wire Line
+	5550 3700 6000 3700
+Wire Wire Line
+	6000 3700 6000 3500
+Wire Wire Line
+	6000 3500 6850 3500
+Wire Wire Line
+	5550 3450 5950 3450
+Wire Wire Line
+	5950 3450 5950 3200
+Wire Wire Line
+	5950 3200 6850 3200
+Wire Wire Line
+	5550 3350 5850 3350
+Wire Wire Line
+	5850 3350 5850 3100
+Wire Wire Line
+	5850 3100 6850 3100
+Wire Wire Line
+	5550 3050 5750 3050
+Wire Wire Line
+	5750 3050 5750 2950
+Wire Wire Line
+	5750 2950 6200 2950
+Wire Wire Line
+	6200 2950 6200 2400
+Wire Wire Line
+	5550 3900 6300 3900
+Wire Wire Line
+	6300 3900 6300 3300
+Wire Wire Line
+	6300 3300 6850 3300
+Wire Wire Line
+	5550 4000 6400 4000
+Wire Wire Line
+	6400 4000 6400 3400
+Wire Wire Line
+	6400 3400 6850 3400
+$EndSCHEMATC

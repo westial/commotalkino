@@ -4,5 +4,4 @@ CMakeListsUser.txt
 cmake-build-*/ 
 .idea
 lib/*
-!lib/EByte
 lib/CommoTalkie/messageconfig.h
