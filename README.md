@@ -6,12 +6,21 @@ See [https://github.com/westial/commotalkie](https://github.com/westial/commotal
 
 The proof consist on permanently sending a message from the node A to the node B.
 To use a more familiar context lets imagine a ping pong match. The node A is Ping,
-and the node B is Pong. 
+and the node B is Pong.
 
 ![Proof of concept](doc/poc.jpg)
 
 _Attention: There is a Linear Voltage Regulator between the 5V and the Arduino Pro
 Mini 3.3V._
+
+* [Ping pong](#ping-pong)
+* [Circuits](#circuits)
+  + [Arduino Nano as Ping](#arduino-nano-as-ping)
+  + [Arduino Pro Mini 3.3V as Pong](#arduino-pro-mini-33v-as-pong)
+* [Install](#install)
+  + [Deploy CommoTalkie into this project](#deploy-commotalkie-into-this-project)
+* [License](#license)
+* [Author](#author)
 
 ## Ping pong ##
 
