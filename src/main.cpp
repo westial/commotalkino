@@ -11,9 +11,16 @@
 #define PONG_ID 0xBB
 
 #define PING_PONG_INTERVAL 2000
-#define HIT_START 55
+#define HIT_START 0
 
 #define DEBUG 0
+
+#if 1 == DEBUG
+#define LET_HER_PREPARE_DELAY 250
+#else
+#define LET_HER_PREPARE_DELAY 0
+#endif
+
 
 // -----------------------------------------------------------------------------
 // Additional Headers
@@ -47,6 +54,7 @@ const unsigned long receiving_timeout = PULL_TIMEOUT;
 unsigned long loop_count;
 unsigned long hit;
 unsigned long last_hit;
+unsigned long record;
 
 // -----------------------------------------------------------------------------
 // Device Identity
@@ -138,7 +146,7 @@ Driver Create_Driver(const unsigned char address_high,
                      const unsigned char air_data_rate, const int is_fixed,
                      const int full_power) {
   PinMap pins = {PIN_M0, PIN_M1, PIN_AUX};
-  RadioParams params = {{address_low, address_high},
+  RadioParams params = {{address_high, address_low},
                         channel,
                         air_data_rate,
                         is_fixed,
@@ -337,18 +345,18 @@ void debug_result(const char *title, Result result) {
   Serial.print(": ");
   switch (result) {
   case Success:
-    Serial.println("Success -------------------------------------------");
+    Serial.println("------------------ Success ------------------");
     blink(LISTEN_LED_PIN);
     break;
   case Timeout:
-    Serial.println("Timeout xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    Serial.println("xxxxxxxxxxxxxxxxxx Time out xxxxxxxxxxxxxxxxxx");
     break;
   case IOError:
     loop_count = 0;
-    Serial.println("IOError XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+    Serial.println("XXXXXXXXXXXXXXXXXX IO Error XXXXXXXXXXXXXXXXXX");
     break;
   default:
-    Serial.println("UNEXPECTED ******************************************");
+    Serial.println("****************** Unexpected ******************");
   }
 }
 
@@ -364,6 +372,7 @@ void setup() {
   loop_count = 0;
   last_hit = HIT_START;
   hit = HIT_START;
+  record = HIT_START;
 }
 
 void i_receive() {
@@ -392,6 +401,23 @@ void ping_pong() {
   Serial.println(loop_count);
 }
 
+void set_new_record(unsigned long hit_) {
+  if (record < hit_)
+    record = hit;
+}
+
+void print_hit_log() {
+  char hit_log[100];
+  if (0 == hit % 50 || (!my_config.do_i_ping && 0 == (hit - 1) % 50)) {
+    Serial.println("|--------------+--------------+--------------|");
+    sprintf(hit_log, "| %12s | %12s | %12s |", "Given", "Got", "Record");
+    Serial.println(hit_log);
+    Serial.println("|--------------+--------------+--------------|");
+  }
+  sprintf(hit_log, "| %12lu | %12lu | %12lu |", last_hit, hit, record);
+  Serial.println(hit_log);
+}
+
 void assert_ping_pong() {
   if (HIT_START == hit && my_config.do_i_ping) {
     Serial.println("I am Ping");
@@ -401,22 +427,21 @@ void assert_ping_pong() {
     return;
   } else {
     i_receive();
-    Serial.print("Given/Got Hit: ");
-    Serial.print(last_hit);
-    Serial.print("/");
-    Serial.println(hit);
-    if (last_hit == hit) {
+    set_new_record(hit);
+    print_hit_log();
+    if (0 != hit && last_hit == hit) {
       Serial.print("Error at Hit: ");
       Serial.println(hit);
       Serial.println("Hit Error X-X-X-X-X--------=hit=--------X-X-X-X-X-X-X");
       hit = HIT_START;
       delay(PING_PONG_INTERVAL);
       assert_ping_pong();
-    } else {
+    } else if (0 != hit) {
       ++hit;
     }
   }
   last_hit = hit;
+  delay(LET_HER_PREPARE_DELAY);
   i_publish();
 }
 
