@@ -4,7 +4,7 @@ CommoTalkino
 This project is an implementation example of CommoTalkie SDK. 
 See [https://github.com/westial/commotalkie](https://github.com/westial/commotalkie)
 
-The proof consist on permanently sending a message from the node A to the node B.
+The proof of concept consists on sending and getting back a message from the node A and the node B.
 To use a more familiar context lets imagine a ping pong match. The node A is Ping,
 and the node B is Pong.
 
