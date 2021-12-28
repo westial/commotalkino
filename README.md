@@ -70,26 +70,19 @@ The following schema is the circuit for Pro Mini, in this case, Pong.
 
 ![Pro Mini as Ping](doc/arduinoprominiaspong.png)
 
-## Install ##
-
-This project is not developed on Arduino IDE but in [PlatformIO](https://platformio.org/).
-The main building configuration file, [platformio.ini](platformio.ini) provides
-the serial interface to both Arduino devices in a different port, /dev/ttyUSB0
-and /dev/ttyUSB1. Probably you may change this configuration.
-
 ### Deploy CommoTalkie into this project ###
 
 The main dependency of this project is [CommoTalkie](https://github.com/westial/commotalkie)
 and I decided to import from local. So it has to be downloaded first.
 
-Luckily [Makefile](Makefile) gets this job done. It downloads the SDK and installs 
+Luckily [Makefile](Makefile) gets this job done. It downloads the SDK and installs
 into the required directory. Launch the following command to deploy the SDK.
 
 ```shell
 make deploy
 ```
 
-If you have already installed the SDK but, it gets upgraded and you want the 
+If you have already installed the SDK but, it gets upgraded and you want the
 new version, update CommoTalkie SDK by the following command.
 
 ```shell
@@ -100,6 +93,21 @@ Cleaning feature is provided as well.
 
 ```shell
 make clean
+```
+
+## Install ##
+
+This project is not developed on Arduino IDE but in [PlatformIO](https://platformio.org/).
+The main building configuration file, [platformio.ini](platformio.ini) provides
+the serial interface to both Arduino devices in a different port, /dev/ttyUSB0
+and /dev/ttyUSB1. Probably you may change this configuration.
+
+After downloading this project sources, go to the project's root directory and 
+run the following commands to get the PlatformIO toolchain, frameworks and context:
+
+```
+platformio init
+platformio run --target src/main.cpp
 ```
 
 ## License ##
